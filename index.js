@@ -23,17 +23,17 @@ app.post("/compile", (req, res) => {
         });
     }
 
-    // 1. إنشاء مجلد مؤقت
+    // إنشاء فولدر المشروع
     if (!fs.existsSync("sketch")) {
         fs.mkdirSync("sketch");
     }
 
-    // 2. كتابة الكود داخل ملف ino
+    // كتابة الكود
     fs.writeFileSync("sketch/sketch.ino", code);
 
-    // 3. compile باستخدام Arduino CLI
+    // تشغيل Arduino CLI المحلي
     exec(
-        "arduino-cli compile --fqbn arduino:avr:uno sketch",
+        "./arduino-cli-bin/arduino-cli compile --fqbn arduino:avr:uno sketch",
         (err, stdout, stderr) => {
 
             if (err) {
@@ -44,18 +44,18 @@ app.post("/compile", (req, res) => {
             }
 
             try {
-                // 4. قراءة ملف HEX الناتج
+                // مكان ملف HEX
                 const hexPath = "sketch/build/arduino.avr.uno/sketch.ino.hex";
 
                 const hex = fs.readFileSync(hexPath, "utf8");
 
-                res.json({
+                return res.json({
                     success: true,
                     hex: hex
                 });
 
             } catch (e) {
-                res.json({
+                return res.json({
                     success: false,
                     error: "HEX file not found"
                 });
