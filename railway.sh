@@ -2,13 +2,19 @@
 
 echo "Installing Arduino CLI..."
 
-curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+mkdir -p arduino-cli-bin
 
-export PATH=$PATH:~/.arduino-cli/bin
+curl -fsSL https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Linux_64bit.tar.gz -o cli.tar.gz
 
-echo "Setting up cores..."
+tar -xvf cli.tar.gz -C arduino-cli-bin
 
-arduino-cli core update-index
-arduino-cli core install arduino:avr
+chmod +x arduino-cli-bin/arduino-cli
 
-echo "Done setup"
+export PATH=$PATH:$(pwd)/arduino-cli-bin
+
+echo "Installing cores..."
+
+./arduino-cli-bin/arduino-cli core update-index
+./arduino-cli-bin/arduino-cli core install arduino:avr
+
+echo "Setup done"
