@@ -1,23 +1,39 @@
-const express = require("express");
-const app = express();
-
-app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.send("Arduino Server on PHONE 🔥");
-});
+const fs = require("fs");
+const { exec } = require("child_process");
 
 app.post("/compile", (req, res) => {
-  const code = req.body.code;
 
-  console.log("CODE RECEIVED:\n", code);
+    const code = req.body.code;
 
-  res.json({
-    success: true,
-    hex: "DUMMY_HEX"
-  });
-});
+    // 1. اكتب الملف
+    fs.writeFileSync("sketch/sketch.ino", code);
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+    // 2. compile
+    exec("arduino-cli compile --fqbn arduino:avr:uno sketch", (err, stdout, stderr) => {
+
+        if (err) {
+            return res.json({
+                success: false,
+                error: stderr
+            });
+        }
+
+        // 3. قراءة ملف HEX
+        const hexPath = "sketch/build/arduino.avr.uno/sketch.ino.hex";
+
+        try {
+            const hex = fs.readFileSync(hexPath, "utf8");
+
+            res.json({
+                success: true,
+                hex: hex
+            });
+
+        } catch (e) {
+            res.json({
+                success: false,
+                error: "HEX file not found"
+            });
+        }
+    });
 });
