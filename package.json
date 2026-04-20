@@ -1,7 +1,7 @@
 {
   "name": "arduino-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Arduino Online Compiler",
   "main": "index.js",
   "scripts": {
     "start": "bash railway.sh && node index.js"
@@ -11,6 +11,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^4.18.2",
+    "body-parser": "^1.20.2"
   }
 }
